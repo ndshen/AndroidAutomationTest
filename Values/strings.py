@@ -12,6 +12,8 @@ SCAN_BTN_ID = "com.avast.android.mobilesecurity:id/button"
 PERMISSION_ALLOWED_BTN_ID = "com.android.packageinstaller:id/permission_allow_button"
 # 掃描進度物件
 SCAN_PROGRESS_ID = "com.avast.android.mobilesecurity:id/scan_progress"
+# 掃描進度圓圈
+SCAN_PROGRESS_CIRCLE_ID = "com.avast.android.mobilesecurity:id/progress_circle"
 # 掃描完成
 STATUS_ELEMENT_ID = "com.avast.android.mobilesecurity:id/status"
 # '已掃描...個項目'

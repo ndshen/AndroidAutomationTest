@@ -4,6 +4,7 @@ import unittest
 import logging
 import yaml
 import re
+
 from appium.webdriver.common.touch_action import TouchAction
 
 from Values import strings
@@ -49,44 +50,54 @@ class MyTestCase(unittest.TestCase):
         self.driver.implicitly_wait(numbers.DRIVER_WAIT_TIME)
         print(self.driver.get_window_size())
 
-    # def test_scan(self):
-    #     logger = logging.getLogger("ScanTest")
-    #     logger.info("Start Scan Test")
-    #
-    #     self.driver.find_element_by_id(strings.START_USE_BTN_ID).click()
-    #     logger.info("'Start Using' Btn clicked")
-    #     self.driver.find_element_by_id(strings.FREE_VERSION_BTN_ID).click()
-    #     logger.info("Selected free version")
-    #     self.driver.find_element_by_id(strings.CONTINUE_FREE_BTN_ID).click()
-    #     logger.info("Selected free version again")
-    #     self.driver.find_element_by_id(strings.SCAN_BTN_ID).click()
-    #     logger.info("Scan Btn clicked")
-    #     self.driver.find_element_by_id(strings.PERMISSION_ALLOWED_BTN_ID).click()
-    #     logger.info("'Allow Permission' Btn clicked")
-    #
-    #     # My method to know a scan process has ended is to wait for scan progress element disappear
-    #     waitedTime = 0
-    #     while True:
-    #         try:
-    #             time.sleep(5)
-    #             waitedTime += 5
-    #             self.driver.find_element_by_id(strings.SCAN_PROGRESS_ID)
-    #             logger.debug("Waiting for scan progress element to disappear...{}s".format(waitedTime))
-    #             self.assertLess(waitedTime, numbers.MAXIMUM_SCAN_TIME)
-    #         except NoSuchElementException:
-    #             logger.info("Finish Scan Progress")
-    #             break
-    #
-    #     try:
-    #         status_element = self.driver.find_element_by_id(strings.STATUS_ELEMENT_ID)
-    #         logger.info("Status: " + status_element.text)
-    #         self.assertEqual(status_element.text == "掃描完成")
-    #     except NoSuchElementException:
-    #         logger.debug("Can't find status element.")
-    #         # header_title = self.driver.find_element_by_id("com.avast.android.mobilesecurity:id/ui_feed_header_title")
-    #         subtitle_element = self.driver.find_element_by_id(strings.STATUS_SUBTITLE_ELEMENT_ID)
-    #         logger.info("Status Subtitle: " + subtitle_element.text)
-    #         self.assertTrue("已掃描" in subtitle_element.text)
+    def test_scan(self):
+        logger = logging.getLogger("ScanTest")
+        logger.info("Start Scan Test")
+
+        primary_btn = self.driver.find_element_by_id(strings.START_USE_BTN_ID)
+        if primary_btn.text == "開始使用":
+            primary_btn.click()
+            logger.info("'Start Using' Btn clicked")
+            self.driver.find_element_by_id(strings.FREE_VERSION_BTN_ID).click()
+            logger.info("Selected free version")
+            self.driver.find_element_by_id(strings.CONTINUE_FREE_BTN_ID).click()
+            logger.info("Selected free version again")
+            self.driver.find_element_by_id(strings.SCAN_BTN_ID).click()
+            logger.info("Scan Btn clicked")
+            scan_detect_object_id = strings.SCAN_PROGRESS_ID
+        elif primary_btn.text == "立即掃描":
+            primary_btn.click()
+            logger.info("'Scan now' Btn clicked")
+            scan_detect_object_id = strings.SCAN_PROGRESS_CIRCLE_ID
+        else:
+            raise Exception("Primary Btn is found but no message is matched.")
+
+        self.driver.find_element_by_id(strings.PERMISSION_ALLOWED_BTN_ID).click()
+        logger.info("'Allow Permission' Btn clicked")
+
+        # My method to know a scan process has ended is to wait for scan progress element disappear
+        waitedTime = 0
+        while True:
+            try:
+                time.sleep(5)
+                waitedTime += 5
+                self.driver.find_element_by_id(scan_detect_object_id)
+                logger.debug("Waiting for scan progress element to disappear...{}s".format(waitedTime))
+                self.assertLess(waitedTime, numbers.MAXIMUM_SCAN_TIME)
+            except NoSuchElementException:
+                logger.info("Finish Scan Progress")
+                break
+
+        try:
+            status_element = self.driver.find_element_by_id(strings.STATUS_ELEMENT_ID)
+            logger.info("Status: " + status_element.text)
+            self.assertTrue(status_element.text == "掃描完成")
+        except NoSuchElementException:
+            logger.debug("Can't find status element.")
+            # header_title = self.driver.find_element_by_id("com.avast.android.mobilesecurity:id/ui_feed_header_title")
+            subtitle_element = self.driver.find_element_by_id(strings.STATUS_SUBTITLE_ELEMENT_ID)
+            logger.info("Status Subtitle: " + subtitle_element.text)
+            self.assertTrue("已掃描" in subtitle_element.text)
 
     def test_appVersion_info(self):
         logger = logging.getLogger("AppVersionTest")
@@ -101,17 +112,14 @@ class MyTestCase(unittest.TestCase):
         self.driver.find_element_by_xpath(strings.MENU_BAR_XPATH).click()
         logger.info("Clicked Menu Bar")
 
-        self.driver.swipe(start_x=405, start_y=1642, end_x=405, end_y=470, duration=500)
-        logger.info("Menu scrolled to bottom1")
-        # touch = TouchAction(driver=self.driver)
-        # touch.press(x=405, y=1642).move_to(x=409, y=470).release().perform()
-        # logger.info("Menu scrolled to bottom")
-
-
-        time.sleep(10)
-        self.driver.find_element_by_id(strings.SETTINGS_BTN_ID)
+        logger.debug("driver refreshing...")
+        time.sleep(5)
+        logger.debug("driver refreshed")
+        TouchAction(driver=self.driver).press(x=671, y=1537).move_to(x=671, y=600).release().perform()
+        logger.info("Menu scrolled to bottom")
+        self.driver.find_element_by_id(strings.SETTINGS_BTN_ID).click()
         logger.info("Clicked Settings")
-        self.driver.find_element_by_xpath(strings.ABOUT_BTN_XPATH)
+        self.driver.find_element_by_xpath(strings.ABOUT_BTN_XPATH).click()
         logger.info("Clicked About")
         version_info_textview = self.driver.find_element_by_id(strings.VERSION_INFO_TEXTVIEW_ID)
         logger.info("Version Info: " + version_info_textview.text)
