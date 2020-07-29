@@ -123,3 +123,11 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+#Android application
+.apk
+
+#log file
+.log
+
+.idea/

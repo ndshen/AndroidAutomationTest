@@ -1,0 +1,15 @@
+app:
+  name: "com.avast.android.mobilesecurity_323712_apps.evozi.com.apk"
+  location: "C:\\Users\\ndshen\\PycharmProjects\\AndroidAutomationTest\\"
+  package: "com.avast.android.mobilesecurity"
+  waitActivity: "com.avast.android.mobilesecurity.app.main.MainActivity"
+
+device:
+  name: "H9AZCY02N575CNJ"
+  platform: "Android"
+
+appium:
+  url: "http://localhost:4723/wd/hub"
+  uiautomator2ServerLaunchTimeout: 50000
+
+
