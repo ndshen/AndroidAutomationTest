@@ -125,9 +125,6 @@ dmypy.json
 .pyre/
 
 #Android application
-.apk
-
-#log file
-.log
+*.apk
 
 .idea/
